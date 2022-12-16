@@ -9,6 +9,7 @@ foreach src: src_files
                                depfile: src+'.cc.dep',
                                command: clang_cpp+
                                         libs_includes +
+                                        libplatforms_includes +
                                         obj_flags +
                                         clang_flags)
 endforeach

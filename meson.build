@@ -1,10 +1,13 @@
-project('build-libs', 'cpp',
+project('libsra', 'cpp',
     default_options : ['warning_level=3',
                        'cpp_std=c++17',
                        'buildtype=debugoptimized'])
 
 fs = import('fs')
-gcc_version = files('gcc_version.py')
+
+libplatforms_proj = subproject('libplatforms')
+libplatforms_includes = libplatforms_proj.get_variable('libs_includes')
+default_linkerscript = libplatforms_proj.get_variable('default_linkerscript')
 
 # Python
 py3_mod = import('python')
@@ -14,7 +17,7 @@ if py3_inst.language_version().version_compare('<3.9')
 endif
 
 ## llvm dependencies
-llvm_version = ['>=10', '<13']
+llvm_version = ['>=14', '<16']
 llvm_dep = dependency('llvm', method: 'config-tool', version: llvm_version, include_type: 'system')
 
 llvm_bindir = llvm_dep.get_variable(configtool: 'bindir')
@@ -44,20 +47,11 @@ endforeach
 # this variables are filled in the subdirs
 libs_includes = []
 libs_include_dirs = []
-libs_targets = []
 
+subdir('tools')
 subdir('settings')
-subdir('platform')
 subdir('include')
 subdir('sra')
-subdir('freertos')
-# subdir('osek')
-subdir('autosar')
 
-libs_targets += libsra_ar
-buildlibs_deps = []
-
-foreach target : libs_targets
-    buildlibs_deps += declare_dependency(link_with : target,
-                                         include_directories : libs_include_dirs)
-endforeach
+libsra_dep = declare_dependency(link_with : libsra_ar,
+                                include_directories : libs_include_dirs)
