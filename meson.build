@@ -5,7 +5,7 @@ project('libsra', 'cpp',
 
 fs = import('fs')
 
-libplatforms_proj = subproject('libplatforms')
+libplatforms_proj = subproject('ara-libplatforms')
 libplatforms_includes = libplatforms_proj.get_variable('libs_includes')
 default_linkerscript = libplatforms_proj.get_variable('default_linkerscript')
 
