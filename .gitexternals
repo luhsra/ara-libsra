@@ -1,0 +1,5 @@
+[external "ara-libplatforms"]
+	path = subprojects/ara-libplatforms
+	url = https://scm.sra.uni-hannover.de/research/ara-libplatforms
+	branch = main
+	vcs = git
