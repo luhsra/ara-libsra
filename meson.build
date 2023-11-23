@@ -3,55 +3,27 @@ project('libsra', 'cpp',
                        'cpp_std=c++17',
                        'buildtype=debugoptimized'])
 
-fs = import('fs')
-
 libplatforms_proj = subproject('ara-libplatforms')
-libplatforms_includes = libplatforms_proj.get_variable('libs_includes')
-default_linkerscript = libplatforms_proj.get_variable('default_linkerscript')
+arm_enabled = libplatforms_proj.get_variable('arm_enabled')
 
-# Python
-py3_mod = import('python')
-py3_inst = py3_mod.find_installation('python3', modules: [])
-if py3_inst.language_version().version_compare('<3.9')
-    error('At least Python 3.9 is required.')
-endif
+if arm_enabled
+  ar_cmd = libplatforms_proj.get_variable('ar_cmd')
+  clang_c = libplatforms_proj.get_variable('clang_c')
+  clang_cpp = libplatforms_proj.get_variable('clang_cpp')
+  clang_flags = libplatforms_proj.get_variable('clang_flags')
+  obj_flags = libplatforms_proj.get_variable('obj_flags')
 
-## llvm dependencies
-llvm_version = ['>=14', '<16']
-llvm_dep = dependency('llvm', method: 'config-tool', version: llvm_version, include_type: 'system')
+  libplatform_link_with = libplatforms_proj.get_variable('libplatform_link_with')
+  libplatform_include_directories = libplatforms_proj.get_variable('libplatform_include_directories')
 
-llvm_bindir = llvm_dep.get_variable(configtool: 'bindir')
-clang = find_program(llvm_bindir / 'clang', version: llvm_version)
-llvm_link = find_program(llvm_bindir / 'llvm-link', version: llvm_version)
+  arm_clang_flags = libplatforms_proj.get_variable('arm_clang_flags')
+  arm_ld_flags = libplatforms_proj.get_variable('arm_ld_flags')
 
-## arch specific build tools
-if get_option('arch') == 'i386'
-    target_triple='x86_64-linux-gnu'
-elif get_option('arch') == 'arm'
-    target_triple = 'arm-none-eabi'
+  subdir('include')
+  subdir('sra')
+
+  libsra_link_with = libsra_ar
+  libsra_include_directories = [libsra_include]
 else
-    error('unknown arch ' + get_option('arch'))
+  libsra_link_with = disabler()
 endif
-
-arch_error = 'Do you have an @0@ toolchain? Otherwise consider to switch to another architecture. See the "arch" config option for that.'
-
-foreach prog_name : ['ar', 'ld']
-    full_prog_name = target_triple + '-' + prog_name
-    prog = find_program(full_prog_name, required: false)
-    if not prog.found()
-        error(arch_error.format(get_option('arch').to_upper()))
-    endif
-    set_variable(prog_name, prog)
-endforeach
-
-# this variables are filled in the subdirs
-libs_includes = []
-libs_include_dirs = []
-
-subdir('tools')
-subdir('settings')
-subdir('include')
-subdir('sra')
-
-libsra_dep = declare_dependency(link_with : libsra_ar,
-                                include_directories : libs_include_dirs)

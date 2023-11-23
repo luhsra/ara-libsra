@@ -10,7 +10,7 @@ foreach src: src_files
                                output: src+'.cc.o',
                                depfile: src+'.cc.dep',
                                command: clang_cpp+
-                                        libs_includes +
+                                        ['-I', libsra_include] +
                                         libplatforms_includes +
                                         obj_flags +
                                         ['-O2'] +
