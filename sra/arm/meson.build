@@ -8,6 +8,7 @@ libsra_objs += custom_target('libsra-output.o',
                              output: 'output.cc.o',
                              depfile: 'output.cc.dep',
                              command: clang_cpp +
+                                      arm_clang_flags +
                                       includes +
                                       ['-I', libsra_include] +
                                       obj_flags +

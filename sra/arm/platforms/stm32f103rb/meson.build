@@ -4,14 +4,20 @@ src_files = [
   'sparse',
 ]
 
+includes = []
+foreach include_dir : libplatform_include_directories
+  includes += ['-I', include_dir]
+endforeach
+
 foreach src: src_files
   libsra_objs += custom_target(src,
                                input: src+'.cc',
                                output: src+'.cc.o',
                                depfile: src+'.cc.dep',
-                               command: clang_cpp+
+                               command: clang_cpp +
+                                        arm_clang_flags +
                                         ['-I', libsra_include] +
-                                        libplatforms_includes +
+                                        includes +
                                         obj_flags +
                                         ['-O2'] +
                                         clang_flags)
