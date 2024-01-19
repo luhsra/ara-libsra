@@ -17,8 +17,8 @@ if arm_enabled
   libplatform_include_directories = libplatforms_proj.get_variable('libplatform_include_directories')
 
   arm_clang_flags = libplatforms_proj.get_variable('arm_clang_flags')
+  stm32_clang_flags = libplatforms_proj.get_variable('stm32_clang_flags')
   arm_ld_flags = libplatforms_proj.get_variable('arm_ld_flags')
-
   subdir('include')
   subdir('sra')
 

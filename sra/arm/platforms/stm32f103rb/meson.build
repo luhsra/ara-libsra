@@ -15,6 +15,7 @@ foreach src: src_files
                                output: src+'.cc.o',
                                depfile: src+'.cc.dep',
                                command: clang_cpp +
+                                        stm32_clang_flags +
                                         arm_clang_flags +
                                         ['-I', libsra_include] +
                                         includes +
