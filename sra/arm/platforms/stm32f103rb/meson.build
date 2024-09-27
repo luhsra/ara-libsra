@@ -20,6 +20,6 @@ foreach src: src_files
                                         ['-I', libsra_include] +
                                         includes +
                                         obj_flags +
-                                        ['-O2'] +
-                                        clang_flags)
+                                        clang_flags +
+                                        ['-O2'])
 endforeach
